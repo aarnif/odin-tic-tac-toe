@@ -34,10 +34,19 @@ const GameBoard = () => {
     );
   };
 
+  const emptyBoard = () => {
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        board[i][j] = BoardCell(0);
+      }
+    }
+  };
+
   return {
     getBoard,
     putMarkToBoard,
     printBoard,
+    emptyBoard,
   };
 };
 
@@ -121,7 +130,7 @@ const GameController = () => {
     const putMark = gameBoard.putMarkToBoard(row, col, activePlayer.mark);
 
     if (!putMark) {
-      return;
+      return "INVALID";
     }
 
     console.log(
@@ -131,13 +140,13 @@ const GameController = () => {
     if (checkForTie()) {
       gameBoard.printBoard();
       console.log("Game over. Its a draw.");
-      return true;
+      return "DRAW";
     }
 
     if (checkForWin()) {
       gameBoard.printBoard();
       console.log(`${getActivePlayer().name} wins!`);
-      return true;
+      return "WIN";
     }
 
     switchPlayersTurn();
@@ -147,21 +156,94 @@ const GameController = () => {
   return {
     playRound,
     getActivePlayer,
+    switchPlayersTurn,
+    getBoard: gameBoard.getBoard,
+    emptyBoard: gameBoard.emptyBoard,
   };
 };
 
-const game = GameController();
+const ScreenController = () => {
+  console.log("Starting new game.");
+  const game = GameController();
+  const boardContainer = document.getElementById("game-board");
+  const gameModal = document.getElementById("modal");
+  const newGameButton = document.getElementById("new-game-button");
 
-const gameLoop = () => {
-  while (true) {
-    const [row, col] = prompt(
-      `${game.getActivePlayer().name} turn. Enter row and column between 0-2`
-    ).split(" ");
+  const handleClickCell = (e) => {
+    const row = e.target.dataset.row;
+    const col = e.target.dataset.col;
 
-    if (game.playRound(row, col)) {
-      break;
+    const gameResult = game.playRound(row, col);
+
+    switch (gameResult) {
+      case "INVALID":
+        displayGameMessage("Cell is already taken. Try again.");
+        break;
+      case "DRAW":
+        displayGameMessage("Game over. Its a draw.");
+        displayGameOverModal("Game over. Its a draw.");
+        break;
+      case "WIN":
+        displayGameMessage(`${game.getActivePlayer().name} wins!`);
+        displayGameOverModal(`${game.getActivePlayer().name} wins!`);
+        break;
+      default:
+        break;
     }
-  }
+
+    updateScreen();
+  };
+
+  const updateScreen = () => {
+    console.log("Updating screen");
+    const gameBoard = game.getBoard();
+    boardContainer.innerHTML = "";
+
+    for (let i = 0; i < gameBoard.length; i++) {
+      for (let j = 0; j < gameBoard[i].length; j++) {
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("cell");
+        cellButton.dataset.row = i;
+        cellButton.dataset.col = j;
+        cellButton.textContent =
+          gameBoard[i][j].getValue() === 0 ? "" : gameBoard[i][j].getValue();
+        cellButton.addEventListener("click", handleClickCell);
+        boardContainer.appendChild(cellButton);
+      }
+    }
+
+    displayGameMessage(`${game.getActivePlayer().name}'s turn.`);
+  };
+
+  const displayGameMessage = (message) => {
+    const gameMessage = document.getElementById("game-message");
+    gameMessage.textContent = message;
+  };
+
+  const displayGameOverModal = (message) => {
+    const gameModalMessage = document.getElementById("modal-message");
+    gameModalMessage.textContent = message;
+    gameModal.showModal();
+  };
+
+  const startNewGame = () => {
+    console.log("Starting new game.");
+    game.emptyBoard();
+    game.switchPlayersTurn();
+    updateScreen();
+    displayGameMessage(`${game.getActivePlayer().name}'s turn.`);
+  };
+
+  gameModal.addEventListener("cancel", (event) => {
+    event.preventDefault();
+  });
+
+  newGameButton.addEventListener("click", () => {
+    startNewGame();
+    gameModal.close();
+  });
+
+  updateScreen();
 };
 
-gameLoop();
+ScreenController();
