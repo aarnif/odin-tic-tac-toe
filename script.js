@@ -65,11 +65,34 @@ const BoardCell = () => {
   };
 };
 
-const Player = (name, mark) => {
-  return { name, mark };
+const Player = (name, mark, score = 0) => {
+  // let score = 0;
+  let playerName = name;
+  const changeName = (newName) => {
+    playerName = newName;
+  };
+  const increaseScore = () => {
+    ++score;
+  };
+
+  const getName = () => playerName;
+  const getMark = () => mark;
+  const getScore = () => score;
+
+  return {
+    name,
+    mark,
+    score,
+    changeName,
+    increaseScore,
+    getName,
+    getMark,
+    getScore,
+  };
 };
 
 const GameController = () => {
+  console.log("Creating new game controller.");
   const gameBoard = GameBoard();
   const player1 = Player("Player 1", "X");
   const player2 = Player("Player 2", "O");
@@ -77,9 +100,17 @@ const GameController = () => {
   let activePlayer = player1;
 
   const switchPlayersTurn = () =>
-    activePlayer === player1
-      ? (activePlayer = player2)
-      : (activePlayer = player1);
+    activePlayer.getName() === player1.getName()
+      ? (activePlayer = Player(
+          player2.getName(),
+          player2.getMark(),
+          player2.getScore()
+        ))
+      : (activePlayer = Player(
+          player1.getName(),
+          player1.getMark(),
+          player1.getScore()
+        ));
 
   const getActivePlayer = () => activePlayer;
 
@@ -97,7 +128,6 @@ const GameController = () => {
         return false;
       }
     }
-
     return true;
   };
 
@@ -122,7 +152,6 @@ const GameController = () => {
         return true;
       }
     }
-
     return false;
   };
 
@@ -146,6 +175,7 @@ const GameController = () => {
     if (checkForWin()) {
       gameBoard.printBoard();
       console.log(`${getActivePlayer().name} wins!`);
+      activePlayer.increaseScore();
       return "WIN";
     }
 
@@ -153,10 +183,18 @@ const GameController = () => {
     printNewRound();
   };
 
+  const newGame = () => {
+    console.log("Starting new game.");
+    gameBoard.emptyBoard();
+    switchPlayersTurn();
+  };
+
   return {
+    player1,
+    player2,
     playRound,
     getActivePlayer,
-    switchPlayersTurn,
+    newGame,
     getBoard: gameBoard.getBoard,
     emptyBoard: gameBoard.emptyBoard,
   };
@@ -166,7 +204,12 @@ const ScreenController = () => {
   console.log("Starting new game.");
   const game = GameController();
   const boardContainer = document.getElementById("game-board");
-  const gameModal = document.getElementById("modal");
+  const player1Info = document.getElementById("player1-info");
+  const player2Info = document.getElementById("player2-info");
+  const gameOverModal = document.getElementById("game-over-modal");
+  const changeNameModal = document.getElementById("change-name-modal");
+  const newNameInput = document.getElementById("new-name");
+  const changeNameButton = document.getElementById("change-name-button");
   const newGameButton = document.getElementById("new-game-button");
 
   const handleClickCell = (e) => {
@@ -213,6 +256,8 @@ const ScreenController = () => {
     }
 
     displayGameMessage(`${game.getActivePlayer().name}'s turn.`);
+    displayPlayerInfos(game.player1, game.player2);
+    console.log(game.player1.getName(), game.player2.getName());
   };
 
   const displayGameMessage = (message) => {
@@ -220,27 +265,58 @@ const ScreenController = () => {
     gameMessage.textContent = message;
   };
 
+  const displayPlayerInfos = (player1, player2) => {
+    player1Info.textContent = `${player1.getName()}: ${player1.getScore()}`;
+    player2Info.textContent = `${player2.getName()}: ${player2.getScore()}`;
+  };
+
   const displayGameOverModal = (message) => {
     const gameModalMessage = document.getElementById("modal-message");
     gameModalMessage.textContent = message;
-    gameModal.showModal();
+    gameOverModal.showModal();
   };
 
   const startNewGame = () => {
-    console.log("Starting new game.");
-    game.emptyBoard();
-    game.switchPlayersTurn();
+    game.newGame();
     updateScreen();
     displayGameMessage(`${game.getActivePlayer().name}'s turn.`);
   };
 
-  gameModal.addEventListener("cancel", (event) => {
-    event.preventDefault();
+  const updateName = (player) => {
+    console.log("Updating name for:", player.getName());
+    const newName = document.getElementById("new-name").value;
+    player.changeName(newName);
+    changeNameModal.close();
+    updateScreen();
+  };
+
+  const updateNameListenerPlayer1 = () => {
+    updateName(game.player1);
+    changeNameButton.removeEventListener("click", updateNameListenerPlayer1);
+  };
+
+  const updateNameListenerPlayer2 = () => {
+    updateName(game.player2);
+    changeNameButton.removeEventListener("click", updateNameListenerPlayer2);
+  };
+
+  player1Info.addEventListener("click", () => {
+    changeNameModal.showModal();
+    newNameInput.value = game.player1.getName();
+    changeNameButton.addEventListener("click", updateNameListenerPlayer1);
   });
+
+  player2Info.addEventListener("click", () => {
+    changeNameModal.showModal();
+    newNameInput.value = game.player2.getName();
+    changeNameButton.addEventListener("click", updateNameListenerPlayer2);
+  });
+
+  gameOverModal.addEventListener("cancel", (event) => event.preventDefault());
 
   newGameButton.addEventListener("click", () => {
     startNewGame();
-    gameModal.close();
+    gameOverModal.close();
   });
 
   updateScreen();

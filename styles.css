@@ -35,6 +35,11 @@ body {
   font-size: 1.6rem;
 }
 
+.player-info {
+  margin-top: 20px;
+  font-size: 1.6rem;
+}
+
 dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.7);
 }

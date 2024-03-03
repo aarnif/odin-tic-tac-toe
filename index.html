@@ -12,10 +12,17 @@
       <h1>Tic Tac Toe</h1>
       <div id="game-board"></div>
       <div id="game-message"></div>
-      <dialog id="modal" data-modal>
+      <button id="player1-info" class="player-info"></button>
+      <button id="player2-info" class="player-info"></button>
+      <dialog id="game-over-modal" data-modal>
         <h2>Game Over</h2>
         <div id="modal-message"></div>
         <button id="new-game-button">New Game</button>
+      </dialog>
+      <dialog id="change-name-modal" data-modal>
+        <label for="new-name">Enter new name:</label>
+        <input type="text" id="new-name" name="new-name" value="" />
+        <button id="change-name-button">Change name</button>
       </dialog>
     </div>
   </body>
