@@ -175,7 +175,9 @@ const GameController = () => {
     if (checkForWin()) {
       gameBoard.printBoard();
       console.log(`${getActivePlayer().name} wins!`);
-      activePlayer.increaseScore();
+      activePlayer.getName() === player1.getName()
+        ? player1.increaseScore()
+        : player2.increaseScore();
       return "WIN";
     }
 
@@ -203,14 +205,35 @@ const GameController = () => {
 const ScreenController = () => {
   console.log("Starting new game.");
   const game = GameController();
+  const gameBoard = game.getBoard();
   const boardContainer = document.getElementById("game-board");
-  const player1Info = document.getElementById("player1-info");
-  const player2Info = document.getElementById("player2-info");
+  const player1Name = document.getElementById("player1-name");
+  const player2name = document.getElementById("player2-name");
+  const player1Score = document.getElementById("player1-score");
+  const player2Score = document.getElementById("player2-score");
   const gameOverModal = document.getElementById("game-over-modal");
   const changeNameModal = document.getElementById("change-name-modal");
   const newNameInput = document.getElementById("new-name");
   const changeNameButton = document.getElementById("change-name-button");
   const newGameButton = document.getElementById("new-game-button");
+
+  const handleMouseOverHover = (e) => {
+    console.log("Mouse over cell");
+    const row = e.target.dataset.row;
+    const col = e.target.dataset.col;
+    if (gameBoard[row][col].getValue() === 0) {
+      e.target.textContent = game.getActivePlayer().getMark();
+    }
+  };
+
+  const handleMouseOutHover = (e) => {
+    console.log("Mouse out cell");
+    const row = e.target.dataset.row;
+    const col = e.target.dataset.col;
+    if (gameBoard[row][col].getValue() === 0) {
+      e.target.textContent = "";
+    }
+  };
 
   const handleClickCell = (e) => {
     const row = e.target.dataset.row;
@@ -239,7 +262,6 @@ const ScreenController = () => {
 
   const updateScreen = () => {
     console.log("Updating screen");
-    const gameBoard = game.getBoard();
     boardContainer.innerHTML = "";
 
     for (let i = 0; i < gameBoard.length; i++) {
@@ -250,6 +272,8 @@ const ScreenController = () => {
         cellButton.dataset.col = j;
         cellButton.textContent =
           gameBoard[i][j].getValue() === 0 ? "" : gameBoard[i][j].getValue();
+        cellButton.addEventListener("mouseover", handleMouseOverHover);
+        cellButton.addEventListener("mouseout", handleMouseOutHover);
         cellButton.addEventListener("click", handleClickCell);
         boardContainer.appendChild(cellButton);
       }
@@ -266,8 +290,10 @@ const ScreenController = () => {
   };
 
   const displayPlayerInfos = (player1, player2) => {
-    player1Info.textContent = `${player1.getName()}: ${player1.getScore()}`;
-    player2Info.textContent = `${player2.getName()}: ${player2.getScore()}`;
+    player1Name.textContent = `${player1.getName()}`;
+    player2name.textContent = `${player2.getName()}`;
+    player1Score.textContent = `${player1.getScore()}`;
+    player2Score.textContent = `${player2.getScore()}`;
   };
 
   const displayGameOverModal = (message) => {
@@ -300,13 +326,13 @@ const ScreenController = () => {
     changeNameButton.removeEventListener("click", updateNameListenerPlayer2);
   };
 
-  player1Info.addEventListener("click", () => {
+  player1Name.addEventListener("click", () => {
     changeNameModal.showModal();
     newNameInput.value = game.player1.getName();
     changeNameButton.addEventListener("click", updateNameListenerPlayer1);
   });
 
-  player2Info.addEventListener("click", () => {
+  player2name.addEventListener("click", () => {
     changeNameModal.showModal();
     newNameInput.value = game.player2.getName();
     changeNameButton.addEventListener("click", updateNameListenerPlayer2);
