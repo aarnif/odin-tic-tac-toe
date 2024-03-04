@@ -13,15 +13,33 @@
       <div id="game-message"></div>
       <div class="game-board-container">
         <div class="player-info">
-          <button id="player1-name" class="button"></button>
-          <div id="player1-score" class="player-score"></div>
+          <button id="player1-name" class="button player-name"></button>
         </div>
         <div id="game-board"></div>
         <div class="player-info">
-          <button id="player2-name" class="button"></button>
-          <div id="player2-score" class="player-score"></div>
+          <button id="player2-name" class="button player-name"></button>
         </div>
       </div>
+      <div class="score-board-container">
+        <div class="score-board-header">SCORE BOARD</div>
+        <ul class="score-board">
+          <li><div id="player1-score" class="player-score">0</div></li>
+          <li><div id="player1-score" class="player-score">-</div></li>
+          <li><div id="player2-score" class="player-score">0</div></li>
+        </ul>
+      </div>
+      <footer id="footer">
+        <div class="footer-container">
+          <div id="footer-text">Created By aarnif</div>
+          <a href="https://github.com/aarnif" target="_blank" rel="noreferrer"
+            ><img
+              id="github-icon"
+              src="assets/images/github.svg"
+              alt="GitHub Profile Link"
+            />
+          </a>
+        </div>
+      </footer>
       <dialog id="game-over-modal" data-modal>
         <h2>Game Over</h2>
         <div id="modal-message"></div>

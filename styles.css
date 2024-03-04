@@ -1,16 +1,56 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Madimi+One&display=swap");
+@font-face {
+  font-family: "Arcade Classic";
+  src: url("assets/fonts/arcadeclassic.regular.ttf");
+}
+
+:root {
+  --header-bg-color: #5a4e8e;
+  --body-bg-color: #dcd6f7;
+  --board-cell-bg-color: #c4b5fd;
+  --modal-bg-color: #c4b5fd;
+  --board-border: 3px outset #5a4e8e;
+  --button-bg-color: #5a4e8e;
+  --input-bg-color: #a99ac1;
+
+  --text-font: "Arcade Classic", sans-serif;
+
+  --shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  --text-font-size: 16px;
+  --header-font-size: 4.5rem;
+  --game-message-font-size: 2.5rem;
+  --score-board-header-font-size: 3rem;
+  --score-board-font-size: 5rem;
+  --cell-font-size: 6rem;
+  --player-name-font-size: 3rem;
+  --button-font-size: 2rem;
+  --footer-font-size: 1.5rem;
+
+  --text-color: #352f44;
+  --cell-hover-text-color: #a99ac1;
+  --header-text-color: #ffffff;
+  --button-text-color: #dcd6f7;
+  --modal-text-color: #352f44;
+  --footer-text-color: #352f44;
+}
 
 html {
-  font-family: "Roboto", sans-serif;
-  font-size: 16px;
-  color: #475569;
+  font-family: var(--text-font);
+  font-size: var(--text-font-size);
+  color: var(--text-color);
 }
 
 body {
   margin: 0;
   box-sizing: border-box;
-  background-color: #cbd5e1;
+  background-color: var(--body-bg-color);
+}
+
+ul,
+li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 #wrapper {
@@ -28,17 +68,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #64748b;
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
-    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  background-color: var(--header-bg-color);
+  box-shadow: var(--shadow);
 }
 
 .header > h1 {
   all: unset;
-  font-family: "Madimi One", sans-serif;
-  font-size: 4rem;
+  font-size: var(--header-font-size);
   font-weight: bold;
-  color: #1e293b;
+  color: var(--header-text-color);
 }
 
 #game-message {
@@ -48,7 +86,7 @@ body {
   justify-content: center;
   align-items: center;
   margin: 30px;
-  font-size: 2.5rem;
+  font-size: var(--game-message-font-size);
   font-weight: bold;
 }
 
@@ -63,18 +101,24 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
+  box-shadow: var(--shadow);
 }
 
 .cell {
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   font-size: 32px;
-  border: 3px solid #64748b;
-  background-color: #e2e8f0;
-  font-size: 6rem;
+  border: var(--board-border);
+  background-color: var(--board-cell-bg-color);
+  font-family: var(--cell-text-font);
+  font-size: var(--cell-font-size);
   font-weight: 1000;
   color: #64748b;
   cursor: pointer;
+}
+
+.cell.hover {
+  color: var(--cell-hover-text-color);
 }
 
 .cell[data-row="0"].cell[data-col="0"] {
@@ -120,25 +164,32 @@ body {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  font-size: 1.6rem;
 }
 
 .button {
   all: unset;
-  min-width: 160px;
+  min-width: 200px;
   max-width: 400px;
   height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-left: 6px;
-  padding-right: 6px;
-  background-color: #64748b;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: var(--button-bg-color);
   border-radius: 10px;
-  font-size: 2rem;
-  color: #e2e8f0;
+  font-family: var(--cell-text-font);
+  font-size: var(--button-font-size);
+  color: var(--button-text-color);
   cursor: pointer;
   transition: transform 0.3s ease-in-out;
+  box-shadow: var(--shadow);
+}
+
+.button.player-name {
+  min-width: 200px;
+  font-size: var(--player-name-font-size);
+  font-weight: 500;
 }
 
 .button:hover {
@@ -153,10 +204,64 @@ body {
   transform: scale(0.95);
 }
 
-.player-score {
-  margin-top: 20px;
+.score-board-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.score-board-header {
+  margin-top: 30px;
+  font-size: var(--score-board-header-font-size);
   font-weight: 500;
-  font-size: 3rem;
+}
+
+.score-board {
+  width: 200px;
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.player-score {
+  font-weight: 500;
+  font-size: var(--score-board-font-size);
+}
+
+#footer {
+  flex-grow: 1;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+
+.footer-container {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#footer-text {
+  margin-left: 4px;
+  margin-right: 4px;
+  font-size: var(--footer-font-size);
+  color: var(--footer-text-color);
+}
+
+#github-icon {
+  width: 28px;
+  margin-left: 4px;
+  margin-right: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 dialog::backdrop {
@@ -166,14 +271,14 @@ dialog::backdrop {
 dialog[open] {
   display: flex;
   width: 400px;
-  height: 300px;
+  height: 250px;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  background-color: #cbd5e1;
+  background-color: var(--modal-bg-color);
   border-radius: 10px;
   font-size: 2rem;
-  color: #475569;
+  color: var(--modal-text-color);
 }
 
 dialog > h2 {
@@ -182,7 +287,7 @@ dialog > h2 {
 
 dialog > input {
   all: unset;
-  background-color: #94a3b8;
+  background-color: var(--input-bg-color);
   border-radius: 10px;
   padding: 6px;
   font-size: 1.6rem;

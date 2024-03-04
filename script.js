@@ -222,6 +222,7 @@ const ScreenController = () => {
     const row = e.target.dataset.row;
     const col = e.target.dataset.col;
     if (gameBoard[row][col].getValue() === 0) {
+      e.target.classList.add("hover");
       e.target.textContent = game.getActivePlayer().getMark();
     }
   };
@@ -231,6 +232,7 @@ const ScreenController = () => {
     const row = e.target.dataset.row;
     const col = e.target.dataset.col;
     if (gameBoard[row][col].getValue() === 0) {
+      e.target.classList.remove("hover");
       e.target.textContent = "";
     }
   };
